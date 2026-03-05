@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: venmo-card
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/technicians
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: DATA_DIR
+        value: /var/data
+    disks:
+      - name: venmo-card-data
+        mountPath: /var/data
+        sizeGB: 1

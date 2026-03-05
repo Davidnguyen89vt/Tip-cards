@@ -1,0 +1,15 @@
+{
+  "name": "venmo-card",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Single QR tip selector for technicians",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "qr": "node scripts/generate-qr.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "qrcode": "^1.5.4"
+  }
+}

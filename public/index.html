@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tips Greatly Appreciated</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="hero">
+        <p class="eyebrow">Thank you for your support</p>
+        <h1>Tip Is Greatly Appreciated</h1>
+        <p>Select your technician, then choose Venmo or Cash App.</p>
+      </header>
+
+      <section class="panel">
+        <label for="tech-select">Current technician</label>
+        <select id="tech-select" class="big-select">
+          <option value="">Select technician</option>
+        </select>
+
+        <div id="actions" class="actions hidden" aria-live="polite">
+          <h2 id="selected-name"></h2>
+          <div class="buttons">
+            <a id="venmo-link" class="btn venmo" target="_blank" rel="noopener noreferrer">Tip with Venmo</a>
+            <a id="cashapp-link" class="btn cashapp" target="_blank" rel="noopener noreferrer">Tip with Cash App</a>
+          </div>
+        </div>
+
+        <p id="status" class="status"></p>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

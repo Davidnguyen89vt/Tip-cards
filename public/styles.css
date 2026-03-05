@@ -1,0 +1,178 @@
+:root {
+  --bg-1: #faf6ef;
+  --bg-2: #f0e7d8;
+  --text: #25231f;
+  --panel: #fffdfa;
+  --border: #e3d2bb;
+  --venmo: #008cff;
+  --cashapp: #00d632;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Avenir Next", "Segoe UI", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 10% 10%, var(--bg-1) 0%, var(--bg-2) 90%);
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.app {
+  width: min(780px, 100%);
+  margin: 0 auto;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  margin: 0.25rem 0;
+  font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+}
+
+.hero p {
+  margin: 0;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(37, 35, 31, 0.08);
+  margin-bottom: 16px;
+}
+
+.manage-panel h2 {
+  margin-top: 0;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+input,
+select,
+button {
+  width: 100%;
+  border: 1px solid #cdb89a;
+  border-radius: 12px;
+  font-size: 1rem;
+  padding: 12px;
+  background: #fff;
+}
+
+.big-select {
+  font-size: 1.2rem;
+  font-weight: 700;
+  min-height: 64px;
+}
+
+.actions {
+  margin-top: 20px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.actions h2 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.2rem;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 12px;
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn.venmo {
+  background: var(--venmo);
+}
+
+.btn.cashapp {
+  background: var(--cashapp);
+}
+
+.btn.dark {
+  background: #222;
+}
+
+.add-form {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.manage-list {
+  display: grid;
+  gap: 8px;
+}
+
+.manage-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.manage-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.remove-btn {
+  background: #a42a1e;
+  color: #fff;
+}
+
+.save-btn {
+  background: #2d2b28;
+  color: #fff;
+}
+
+.status {
+  min-height: 22px;
+  margin: 14px 0 0;
+  font-size: 0.95rem;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 560px) {
+  .buttons,
+  .manage-actions {
+    grid-template-columns: 1fr;
+  }
+}
