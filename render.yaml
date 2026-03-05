@@ -10,7 +10,7 @@ services:
         value: 20
       - key: DATA_DIR
         value: /var/data
-    disks:
-      - name: venmo-card-data
-        mountPath: /var/data
-        sizeGB: 1
+    disk:
+      name: venmo-card-data
+      mountPath: /var/data
+      sizeGB: 1
