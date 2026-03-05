@@ -8,7 +8,7 @@ A single-QR app for tipping technicians.
 - Customer taps `Tip with Venmo` or `Tip with Cash App`.
 - Staff directory editing is on a separate admin page.
 
-## Setup
+## Setup (Local)
 1. Install dependencies:
    ```bash
    npm install
@@ -20,21 +20,22 @@ A single-QR app for tipping technicians.
 3. Open customer page: `http://localhost:4000`.
 4. Open admin page for edits: `http://localhost:4000/admin`.
 
-## Deploy on Render
-1. Push this project to GitHub.
-2. In Render, create a new **Blueprint** and select this repo.
-3. Render will read `/Users/davidnguyen/Documents/Venmo Card/render.yaml`.
-4. After deploy, open your live URL:
-   - Customer: `https://YOUR-SERVICE.onrender.com`
-   - Admin: `https://YOUR-SERVICE.onrender.com/admin`
+## Free Deployment (Render + Supabase)
+This avoids Render disk cost.
 
-Note:
-- This app stores editable staff data in `technicians.json`.
-- `render.yaml` mounts a persistent disk at `/var/data` and uses `DATA_DIR=/var/data` so updates are kept after restarts.
+1. Create a free Supabase project.
+2. In Supabase, copy your Postgres connection string (URI format).
+3. In Render (your web service), add environment variable:
+   - `DATABASE_URL` = `<your-supabase-postgres-uri>`
+4. Deploy this repo on Render using `render.yaml`.
 
-## Data source import
-Technicians are imported from Bliss Nail Lounge Turn Management (`/Users/davidnguyen/Documents/Turn management/data/turns.json`) and stored in:
-- `/Users/davidnguyen/Documents/Venmo Card/data/technicians.json`
+How it works:
+- If `DATABASE_URL` is set, app stores technicians in PostgreSQL.
+- On first run, it auto-creates table `technicians` and seeds from `data/technicians.json`.
+
+Important for Supabase connection string:
+- SSL is enabled by default in this app.
+- Use the direct Postgres URI from Supabase settings.
 
 ## Edit technicians anytime
 On the admin page (`/admin`):

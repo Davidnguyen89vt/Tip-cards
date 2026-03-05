@@ -8,9 +8,3 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 20
-      - key: DATA_DIR
-        value: /var/data
-    disk:
-      name: venmo-card-data
-      mountPath: /var/data
-      sizeGB: 1
