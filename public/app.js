@@ -13,6 +13,7 @@ let selectedTechId = '';
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
   statusEl.style.color = isError ? '#9e1a1a' : '#4f4b45';
+  statusEl.classList.toggle('show', Boolean(message));
 }
 
 function toSlug(value) {
@@ -179,7 +180,7 @@ function updateActions() {
 
   if (!selectedTech) {
     actions.classList.add('hidden');
-    setStatus('Please select your technician.');
+    setStatus('');
     return;
   }
 
@@ -200,7 +201,7 @@ function updateActions() {
     return;
   }
 
-  setStatus('Choose Venmo or Cash App.');
+  setStatus('');
 }
 
 async function loadTechnicians() {
@@ -225,10 +226,7 @@ async function loadTechnicians() {
       setStatus('No technicians are configured yet.');
       return;
     }
-
-    if (!statusEl.textContent || statusEl.textContent.startsWith('Loading')) {
-      setStatus('Please select your technician.');
-    }
+    setStatus('');
   } catch (error) {
     setStatus(error.message || 'Unable to load technician list right now.', true);
   }
