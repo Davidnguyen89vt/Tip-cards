@@ -1,8 +1,4 @@
 const techList = document.getElementById('tech-list');
-const actions = document.getElementById('actions');
-const selectedName = document.getElementById('selected-name');
-const venmoLink = document.getElementById('venmo-link');
-const cashAppLink = document.getElementById('cashapp-link');
 const statusEl = document.getElementById('status');
 
 const csvUrl = (window.APP_CONFIG && window.APP_CONFIG.googleSheetCsvUrl) || '';
@@ -150,6 +146,10 @@ function renderTechnicianList() {
   techList.innerHTML = '';
 
   technicians.forEach((tech) => {
+    const item = document.createElement('div');
+    item.className = 'tech-item';
+    item.dataset.id = tech.id;
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'tech-name-btn';
@@ -159,7 +159,8 @@ function renderTechnicianList() {
       selectedTechId = tech.id;
       updateActions();
     });
-    techList.appendChild(btn);
+    item.appendChild(btn);
+    techList.appendChild(item);
   });
 
   if (technicians.some((tech) => tech.id === previous)) {
@@ -174,32 +175,65 @@ function renderTechnicianList() {
 function updateActions() {
   const selectedTech = technicians.find((tech) => tech.id === selectedTechId);
 
-  techList.querySelectorAll('.tech-name-btn').forEach((btn) => {
+  techList.querySelectorAll('.tech-item').forEach((item) => {
+    const btn = item.querySelector('.tech-name-btn');
     btn.classList.toggle('active', btn.dataset.id === selectedTechId);
+
+    const oldInline = item.querySelector('.inline-actions');
+    if (oldInline) oldInline.remove();
   });
 
   if (!selectedTech) {
-    actions.classList.add('hidden');
     setStatus('');
     return;
   }
 
-  selectedName.textContent = `Tip ${selectedTech.name}`;
-
   const hasVenmo = Boolean(selectedTech.venmo);
   const hasCashApp = Boolean(selectedTech.cashApp);
-
-  venmoLink.href = hasVenmo ? selectedTech.venmo : '#';
-  cashAppLink.href = hasCashApp ? selectedTech.cashApp : '#';
-
-  venmoLink.classList.toggle('hidden', !hasVenmo);
-  cashAppLink.classList.toggle('hidden', !hasCashApp);
-  actions.classList.remove('hidden');
 
   if (!hasVenmo && !hasCashApp) {
     setStatus(`No tip links are configured for ${selectedTech.name}.`, true);
     return;
   }
+
+  const selectedItem = techList.querySelector(`.tech-item[data-id="${selectedTechId}"]`);
+  if (!selectedItem) return;
+
+  const inline = document.createElement('div');
+  inline.className = 'inline-actions';
+
+  const heading = document.createElement('div');
+  heading.textContent = `Tip ${selectedTech.name}`;
+  heading.style.fontWeight = '800';
+  heading.style.fontSize = '1.05rem';
+  heading.style.marginTop = '2px';
+  inline.appendChild(heading);
+
+  const buttons = document.createElement('div');
+  buttons.className = 'buttons';
+
+  if (hasVenmo) {
+    const v = document.createElement('a');
+    v.className = 'btn venmo';
+    v.target = '_blank';
+    v.rel = 'noopener noreferrer';
+    v.href = selectedTech.venmo;
+    v.textContent = 'Tip with Venmo';
+    buttons.appendChild(v);
+  }
+
+  if (hasCashApp) {
+    const c = document.createElement('a');
+    c.className = 'btn cashapp';
+    c.target = '_blank';
+    c.rel = 'noopener noreferrer';
+    c.href = selectedTech.cashApp;
+    c.textContent = 'Tip with Cash App';
+    buttons.appendChild(c);
+  }
+
+  inline.appendChild(buttons);
+  selectedItem.appendChild(inline);
 
   setStatus('');
 }
