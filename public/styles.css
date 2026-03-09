@@ -83,6 +83,37 @@ button {
   min-height: 64px;
 }
 
+.tech-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.tech-name-btn {
+  width: 100%;
+  border: 1px solid #cdb89a;
+  border-radius: 14px;
+  background: #fff;
+  color: #25231f;
+  font-weight: 800;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  padding: 14px 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.tech-name-btn:hover {
+  border-color: #b79c78;
+}
+
+.tech-name-btn.active {
+  background: #25231f;
+  color: #fff;
+  border-color: #25231f;
+}
+
 .actions {
   margin-top: 20px;
   border-top: 1px solid var(--border);
@@ -173,6 +204,10 @@ button {
 @media (max-width: 560px) {
   .buttons,
   .manage-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .tech-list {
     grid-template-columns: 1fr;
   }
 }

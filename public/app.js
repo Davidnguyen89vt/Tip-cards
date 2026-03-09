@@ -1,4 +1,4 @@
-const techSelect = document.getElementById('tech-select');
+const techList = document.getElementById('tech-list');
 const actions = document.getElementById('actions');
 const selectedName = document.getElementById('selected-name');
 const venmoLink = document.getElementById('venmo-link');
@@ -8,6 +8,7 @@ const statusEl = document.getElementById('status');
 const csvUrl = (window.APP_CONFIG && window.APP_CONFIG.googleSheetCsvUrl) || '';
 const fallbackCsvUrl = 'technicians.csv';
 let technicians = [];
+let selectedTechId = '';
 
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
@@ -143,27 +144,38 @@ async function loadFromApi() {
   return Array.isArray(payload) ? payload : [];
 }
 
-function renderDropdown() {
-  const previous = techSelect.value;
-  techSelect.innerHTML = '<option value="">Select technician</option>';
+function renderTechnicianList() {
+  const previous = selectedTechId;
+  techList.innerHTML = '';
 
   technicians.forEach((tech) => {
-    const option = document.createElement('option');
-    option.value = tech.id;
-    option.textContent = tech.name;
-    techSelect.appendChild(option);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'tech-name-btn';
+    btn.textContent = tech.name;
+    btn.dataset.id = tech.id;
+    btn.addEventListener('click', () => {
+      selectedTechId = tech.id;
+      updateActions();
+    });
+    techList.appendChild(btn);
   });
 
   if (technicians.some((tech) => tech.id === previous)) {
-    techSelect.value = previous;
+    selectedTechId = previous;
+  } else {
+    selectedTechId = '';
   }
 
   updateActions();
 }
 
 function updateActions() {
-  const selectedId = techSelect.value;
-  const selectedTech = technicians.find((tech) => tech.id === selectedId);
+  const selectedTech = technicians.find((tech) => tech.id === selectedTechId);
+
+  techList.querySelectorAll('.tech-name-btn').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.id === selectedTechId);
+  });
 
   if (!selectedTech) {
     actions.classList.add('hidden');
@@ -208,7 +220,7 @@ async function loadTechnicians() {
       technicians = await loadFromApi();
     }
 
-    renderDropdown();
+    renderTechnicianList();
     if (!technicians.length) {
       setStatus('No technicians are configured yet.');
       return;
@@ -221,7 +233,5 @@ async function loadTechnicians() {
     setStatus(error.message || 'Unable to load technician list right now.', true);
   }
 }
-
-techSelect.addEventListener('change', updateActions);
 
 loadTechnicians();
