@@ -15,13 +15,13 @@
     "id": "candy",
     "name": "CANDY",
     "venmo": "https://venmo.com/code?user_id=3564137951003781727&created=1658492523.492877",
-    "cashApp": ""
+    "cashApp": "https://cash.app/$chitruong90?qr=1"
   },
   {
     "id": "cris",
     "name": "CRIS",
     "venmo": "https://venmo.com/code?user_id=3006938774241280161&created=1638313258.271162",
-    "cashApp": ""
+    "cashApp": "https://cash.app/$kmaleon?qr=1"
   },
   {
     "id": "dora",
@@ -68,7 +68,7 @@
   {
     "id": "lee",
     "name": "LEE",
-    "venmo": "",
+    "venmo": "https://venmo.com/u/leetuphan",
     "cashApp": "https://cash.app/$tuphan1202?qr=1"
   },
   {
@@ -117,7 +117,7 @@
     "id": "tammy",
     "name": "TAMMY",
     "venmo": "https://venmo.com/code?user_id=2867267838672896070&created=1689005014",
-    "cashApp": ""
+    "cashApp": "https://cash.app/$tammydinh14?qr=1"
   },
   {
     "id": "trina",
