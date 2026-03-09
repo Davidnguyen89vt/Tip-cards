@@ -2,10 +2,12 @@ const express = require('express');
 const fs = require('fs/promises');
 const path = require('path');
 const { Pool } = require('pg');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 const DATABASE_URL = process.env.DATABASE_URL || '';
+const GOOGLE_SHEET_CSV_URL = process.env.GOOGLE_SHEET_CSV_URL || '';
 
 const bundledDataDir = path.join(__dirname, 'data');
 const techniciansPath = path.join(bundledDataDir, 'technicians.json');
@@ -246,7 +248,141 @@ function buildDatabaseStorage(connectionString) {
   };
 }
 
-const storage = DATABASE_URL ? buildDatabaseStorage(DATABASE_URL) : buildFileStorage();
+function parseCsvRow(row) {
+  const values = [];
+  let current = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < row.length; i += 1) {
+    const char = row[i];
+    if (char === '"') {
+      if (inQuotes && row[i + 1] === '"') {
+        current += '"';
+        i += 1;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (char === ',' && !inQuotes) {
+      values.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  values.push(current.trim());
+  return values;
+}
+
+function buildGoogleSheetStorage(csvUrl) {
+  async function readFromSheet() {
+    const response = await fetch(csvUrl, {
+      headers: { Accept: 'text/csv' }
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch sheet (HTTP ${response.status})`);
+    }
+
+    const text = await response.text();
+    const lines = text
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    if (!lines.length) {
+      return [];
+    }
+
+    const normalizeHeaderCell = (cell) =>
+      cell
+        .replace(/^\uFEFF/, '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '');
+
+    const nameAliases = ['name', 'technician', 'tech', 'staff', 'staffname', 'technicianname'];
+
+    let headerLineIndex = -1;
+    let header = [];
+    for (let i = 0; i < lines.length; i += 1) {
+      const cells = parseCsvRow(lines[i]).map(normalizeHeaderCell);
+      if (cells.some((h) => nameAliases.includes(h))) {
+        headerLineIndex = i;
+        header = cells;
+        break;
+      }
+    }
+
+    if (headerLineIndex === -1) {
+      throw new Error('Google Sheet must include a "name" column.');
+    }
+
+    const idx = {
+      id: header.indexOf('id'),
+      name: header.findIndex((h) => nameAliases.includes(h)),
+      venmo: header.indexOf('venmo'),
+      cashApp: header.findIndex((h) => h === 'cashapp' || h === 'cash' || h === 'cashappurl')
+    };
+
+    if (idx.name === -1) {
+      throw new Error('Google Sheet must include a "name" column.');
+    }
+
+    const technicians = [];
+    for (let i = headerLineIndex + 1; i < lines.length; i += 1) {
+      const row = parseCsvRow(lines[i]);
+      const name = (row[idx.name] || '').trim();
+      if (!name) continue;
+
+      technicians.push({
+        id: (idx.id >= 0 ? row[idx.id] : '')?.trim() || toSlug(name),
+        name,
+        venmo: (idx.venmo >= 0 ? row[idx.venmo] : '')?.trim() || '',
+        cashApp: (idx.cashApp >= 0 ? row[idx.cashApp] : '')?.trim() || ''
+      });
+    }
+
+    const used = new Set();
+    const normalized = technicians
+      .map(normalizeTechnician)
+      .filter((tech) => tech.name)
+      .map((tech) => {
+        let id = tech.id || toSlug(tech.name);
+        let n = 2;
+        while (used.has(id)) {
+          id = `${toSlug(tech.name)}-${n}`;
+          n += 1;
+        }
+        used.add(id);
+        return { ...tech, id };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    return normalized;
+  }
+
+  async function rejectWrite() {
+    const error = new Error(
+      'Read-only mode: edit technicians in Google Sheet.'
+    );
+    error.code = 'READ_ONLY';
+    throw error;
+  }
+
+  return {
+    async init() {
+      await readFromSheet();
+    },
+    read: readFromSheet,
+    add: rejectWrite,
+    update: rejectWrite,
+    remove: rejectWrite
+  };
+}
+
+const storage = GOOGLE_SHEET_CSV_URL
+  ? buildGoogleSheetStorage(GOOGLE_SHEET_CSV_URL)
+  : DATABASE_URL
+  ? buildDatabaseStorage(DATABASE_URL)
+  : buildFileStorage();
 
 function parsePayload(body) {
   return {
@@ -275,6 +411,10 @@ app.post('/api/technicians', async (req, res) => {
 
     res.status(201).json(await storage.add(payload));
   } catch (error) {
+    if (error.code === 'READ_ONLY') {
+      res.status(403).json({ message: error.message });
+      return;
+    }
     if (error.code === 'DUPLICATE_NAME') {
       res.status(409).json({ message: error.message });
       return;
@@ -297,6 +437,10 @@ app.put('/api/technicians/:id', async (req, res) => {
 
     res.json(await storage.update(id, payload));
   } catch (error) {
+    if (error.code === 'READ_ONLY') {
+      res.status(403).json({ message: error.message });
+      return;
+    }
     if (error.code === 'NOT_FOUND') {
       res.status(404).json({ message: error.message });
       return;
@@ -321,6 +465,10 @@ app.delete('/api/technicians/:id', async (req, res) => {
 
     res.json(await storage.remove(id));
   } catch (error) {
+    if (error.code === 'READ_ONLY') {
+      res.status(403).json({ message: error.message });
+      return;
+    }
     if (error.code === 'NOT_FOUND') {
       res.status(404).json({ message: error.message });
       return;
@@ -344,7 +492,13 @@ storage
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Tip selector app running on http://localhost:${PORT}`);
-      console.log(DATABASE_URL ? 'Storage: PostgreSQL' : `Storage: file (${techniciansPath})`);
+      console.log(
+        GOOGLE_SHEET_CSV_URL
+          ? `Storage: Google Sheet (${GOOGLE_SHEET_CSV_URL})`
+          : DATABASE_URL
+          ? 'Storage: PostgreSQL'
+          : `Storage: file (${techniciansPath})`
+      );
     });
   })
   .catch((error) => {
