@@ -177,7 +177,9 @@ function updateActions() {
 
   techList.querySelectorAll('.tech-item').forEach((item) => {
     const btn = item.querySelector('.tech-name-btn');
-    btn.classList.toggle('active', btn.dataset.id === selectedTechId);
+    const isActive = btn.dataset.id === selectedTechId;
+    btn.classList.toggle('active', isActive);
+    item.classList.toggle('active-tech', isActive);
 
     const oldInline = item.querySelector('.inline-actions');
     if (oldInline) oldInline.remove();
@@ -203,10 +205,8 @@ function updateActions() {
   inline.className = 'inline-actions';
 
   const heading = document.createElement('div');
+  heading.className = 'tip-heading';
   heading.textContent = `Tip ${selectedTech.name}`;
-  heading.style.fontWeight = '800';
-  heading.style.fontSize = '1.05rem';
-  heading.style.marginTop = '2px';
   inline.appendChild(heading);
 
   const buttons = document.createElement('div');
