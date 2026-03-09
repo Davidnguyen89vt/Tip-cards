@@ -1,7 +1,7 @@
 :root {
-  --text: #25231f;
-  --panel: rgba(255, 253, 250, 0.93);
-  --border: #e3d2bb;
+  --text: #403a34;
+  --panel: rgba(255, 255, 255, 0.88);
+  --border: #d8cdc0;
 }
 
 * {
@@ -13,10 +13,10 @@ body {
   font-family: "Avenir Next", "Segoe UI", sans-serif;
   color: var(--text);
   background:
-    linear-gradient(rgba(12, 10, 8, 0.46), rgba(12, 10, 8, 0.46)),
-    url("https://images.unsplash.com/photo-1604654894610-df63bc536371?auto=format&fit=crop&w=1800&q=80");
+    linear-gradient(rgba(255, 252, 248, 0.72), rgba(255, 252, 248, 0.72)),
+    url("assets/floral-bg.jpg");
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-attachment: fixed;
   min-height: 100vh;
   padding: 16px;
@@ -30,8 +30,8 @@ body {
 .hero {
   text-align: center;
   margin-bottom: 18px;
-  color: #fffdf7;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+  color: #3c3128;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.55);
 }
 
 .hero h1 {
@@ -81,14 +81,14 @@ label {
 
 .tech-item.active-tech {
   padding: 8px;
-  border: 2px solid #2e394a;
+  border: 2px solid #8f7d6e;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.58);
 }
 
 .tech-name-btn {
   width: 100%;
-  border: 1px solid #55718a;
+  border: 1px solid #8a7668;
   border-radius: 14px;
   color: #fff;
   font-weight: 900;
@@ -99,7 +99,7 @@ label {
   letter-spacing: 0.02em;
   cursor: pointer;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
-  background: #5d7992;
+  background: #9b8878;
 }
 
 .tech-name-btn:hover {
@@ -107,17 +107,17 @@ label {
 }
 
 .tech-name-btn.active {
-  background: #2f4f6d;
-  border-color: #213a56;
-  box-shadow: 0 10px 22px rgba(31, 54, 80, 0.35);
+  background: #6f8677;
+  border-color: #5d7465;
+  box-shadow: 0 10px 22px rgba(93, 116, 101, 0.35);
 }
 
 .inline-actions {
   display: grid;
   gap: 8px;
-  border: 3px solid #1f2d3d;
+  border: 3px solid #8f7d6e;
   border-radius: 8px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.95);
   padding: 10px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
@@ -128,7 +128,7 @@ label {
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: #1f2d3d;
+  color: #57483c;
 }
 
 .buttons {
@@ -151,13 +151,13 @@ label {
 }
 
 .btn.venmo {
-  background: linear-gradient(135deg, #0a92ff, #005fd8);
-  box-shadow: 0 10px 20px rgba(0, 95, 216, 0.35);
+  background: linear-gradient(135deg, #5f95ca, #3f6e9d);
+  box-shadow: 0 10px 20px rgba(63, 110, 157, 0.35);
 }
 
 .btn.cashapp {
-  background: linear-gradient(135deg, #00d14f, #00a83f);
-  box-shadow: 0 10px 20px rgba(0, 168, 63, 0.35);
+  background: linear-gradient(135deg, #78b187, #4f8c62);
+  box-shadow: 0 10px 20px rgba(79, 140, 98, 0.35);
 }
 
 .status {
