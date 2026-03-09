@@ -6,6 +6,7 @@ const cashAppLink = document.getElementById('cashapp-link');
 const statusEl = document.getElementById('status');
 
 const csvUrl = (window.APP_CONFIG && window.APP_CONFIG.googleSheetCsvUrl) || '';
+const fallbackCsvUrl = 'technicians.csv';
 let technicians = [];
 
 function setStatus(message, isError = false) {
@@ -120,6 +121,15 @@ async function loadFromGoogleSheet(url) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+async function loadFromFallbackCsv() {
+  const response = await fetch(fallbackCsvUrl, { headers: { Accept: 'text/csv' } });
+  if (!response.ok) {
+    throw new Error(`Fallback CSV missing (HTTP ${response.status})`);
+  }
+  const text = await response.text();
+  return loadFromGoogleSheet(`data:text/csv;charset=utf-8,${encodeURIComponent(text)}`);
+}
+
 async function loadFromApi() {
   const response = await fetch('/api/technicians', {
     headers: { 'Content-Type': 'application/json' }
@@ -184,7 +194,19 @@ function updateActions() {
 async function loadTechnicians() {
   try {
     setStatus('Loading technicians...');
-    technicians = csvUrl ? await loadFromGoogleSheet(csvUrl) : await loadFromApi();
+    if (csvUrl) {
+      try {
+        technicians = await loadFromGoogleSheet(csvUrl);
+      } catch (sheetError) {
+        technicians = await loadFromFallbackCsv();
+        setStatus(
+          'Loaded local backup list. Google Sheet may be blocked by browser/network.',
+          true
+        );
+      }
+    } else {
+      technicians = await loadFromApi();
+    }
 
     renderDropdown();
     if (!technicians.length) {
@@ -192,7 +214,9 @@ async function loadTechnicians() {
       return;
     }
 
-    setStatus('Please select your technician.');
+    if (!statusEl.textContent || statusEl.textContent.startsWith('Loading')) {
+      setStatus('Please select your technician.');
+    }
   } catch (error) {
     setStatus(error.message || 'Unable to load technician list right now.', true);
   }
