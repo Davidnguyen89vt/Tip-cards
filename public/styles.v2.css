@@ -81,7 +81,7 @@ label {
 
 .tech-name-btn {
   width: 100%;
-  border: 1px solid #55718a;
+  border: 1px solid #2f4b63;
   border-radius: 14px;
   color: #fff;
   font-weight: 900;
@@ -92,7 +92,7 @@ label {
   letter-spacing: 0.02em;
   cursor: pointer;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
-  background: linear-gradient(135deg, #5d7992, #49657f);
+  background: linear-gradient(135deg, #7f5af0, #2cb67d);
 }
 
 .tech-name-btn:hover {
@@ -100,8 +100,9 @@ label {
 }
 
 .tech-name-btn.active {
-  background: linear-gradient(135deg, #2f4f6d, #1f3650);
-  border-color: #213a56;
+  background: linear-gradient(135deg, #ff8e3c, #ff5470);
+  border-color: #a83a57;
+  box-shadow: 0 10px 22px rgba(255, 84, 112, 0.35);
 }
 
 .inline-actions {
@@ -129,11 +130,13 @@ label {
 }
 
 .btn.venmo {
-  background: linear-gradient(135deg, #0a92ff, #005fd8);
+  background: linear-gradient(135deg, #19a7ff, #6f5bff);
+  box-shadow: 0 10px 20px rgba(65, 104, 255, 0.35);
 }
 
 .btn.cashapp {
-  background: linear-gradient(135deg, #00d14f, #00a83f);
+  background: linear-gradient(135deg, #2ddf6e, #02a85f);
+  box-shadow: 0 10px 20px rgba(0, 168, 95, 0.35);
 }
 
 .status {
